@@ -85,14 +85,14 @@ const TrashBox = () => {
             <div className="flex items-center">
               <div
                 role="button"
-                className="rounded-sm p-2 hover:bg-neutral-200"
+                className="rounded-sm p-2 hover:bg-neutral-200 dark:hover:bg-neutral-600"
                 onClick={(e) => onRestore(e, doc._id)}
               >
                 <Undo className="h-4 w-4 text-muted-foreground" />
               </div>
               <ConfirmModal onConfirm={() => onRemove(doc._id)}>
                 <div
-                  className="rounded-sm p-2 hover:bg-neutral-200"
+                  className="rounded-sm p-2 hover:bg-neutral-200 dark:hover:bg-neutral-600"
                   role="button"
                 >
                   <Trash className="h-4 w-4 text-muted-foreground" />

@@ -30,10 +30,12 @@ import {
 } from "@/components/ui/popover";
 import TrashBox from "./TrashBox";
 import { useSearch } from "@/hooks/use_search";
+import { useSettings } from "@/hooks/use_settings";
 
 const Navigation = () => {
   const pathname = usePathname();
   const search = useSearch();
+  const settings = useSettings();
   const isMobile = useMediaQuery("(max-width: 768px)");
 
   const isResizingRef = useRef(false);
@@ -148,8 +150,13 @@ const Navigation = () => {
         </div>
         <div>
           <UserItem />
-          <Item onClick={search.onOpen} isSearch icon={Search} label={"Search"} />
-          <Item onClick={() => {}} icon={Settings} label={"Settings"} />
+          <Item
+            onClick={search.onOpen}
+            isSearch
+            icon={Search}
+            label={"Search"}
+          />
+          <Item onClick={settings.onOpen} icon={Settings} label={"Settings"} />
           <Item onClick={onCreate} icon={PlusCircle} label={"New Page"} />
         </div>
         <div className="mt-4">
@@ -159,7 +166,10 @@ const Navigation = () => {
             <PopoverTrigger className="w-full mt-4">
               <Item label="Trash" icon={Trash} />
             </PopoverTrigger>
-            <PopoverContent side={isMobile ? "bottom" : "right"} className="p-0 w-72">
+            <PopoverContent
+              side={isMobile ? "bottom" : "right"}
+              className="p-0 w-72"
+            >
               <TrashBox />
             </PopoverContent>
           </Popover>
