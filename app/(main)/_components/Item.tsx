@@ -40,6 +40,11 @@ const Item = ({ onClick, label, icon: Icon, id, documentIcon, active, expanded, 
       <Icon className="shrink-0 h-[18px] mr-2 text-muted-foreground" />
       )}
       <span className="truncate">{label}</span>
+      {isSearch && (
+        <kbd className="ml-auto pointer-events-none inline-flex h-5 select-none items-center  gap-1 bg-muted rounded border px-1.5 font-mono text-[10px] font-medium text-muted-foreground">
+          <span className="text-xs">ctrl</span>K
+        </kbd>
+      )}
     </div>
   );
 };
