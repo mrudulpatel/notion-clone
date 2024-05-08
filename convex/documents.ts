@@ -124,7 +124,6 @@ export const restore = mutation({
     if (existingDoc.userId !== userId)
       throw new Error("You can only restore your own documents");
 
-
     const recursiveRestore = async (docId: Id<"documents">) => {
       const children = await ctx.db
         .query("documents")
@@ -140,16 +139,15 @@ export const restore = mutation({
 
         await recursiveRestore(child._id);
       }
-    }
-
+    };
 
     const options: Partial<Doc<"documents">> = {
       isArchived: false,
-    }
-    if(existingDoc.parentDocument) {
+    };
+    if (existingDoc.parentDocument) {
       const parent = await ctx.db.get(existingDoc.parentDocument);
-      if(parent?.isArchived) {
-        options.parentDocument = undefined
+      if (parent?.isArchived) {
+        options.parentDocument = undefined;
       }
     }
 
@@ -182,5 +180,24 @@ export const remove = mutation({
     const doc = await ctx.db.delete(args.id);
 
     return doc;
-  }
-})
+  },
+});
+
+export const getSearch = query({
+  handler: async (ctx, args) => {
+    const identity = await ctx.auth.getUserIdentity();
+
+    if (!identity) throw new Error("Not Authenticated");
+
+    const userId = identity.subject;
+
+    const documents = await ctx.db
+      .query("documents")
+      .withIndex("by_user", (q) => q.eq("userId", userId))
+      .filter((q) => q.eq(q.field("isArchived"), false))
+      .order("desc")
+      .collect();
+
+    return documents;
+  },
+});
