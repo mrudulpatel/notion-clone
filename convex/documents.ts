@@ -201,3 +201,57 @@ export const getSearch = query({
     return documents;
   },
 });
+
+export const getById = query({
+  args: { documentId: v.id("documents") },
+  handler: async (ctx, args) => {
+    const identity = await ctx.auth.getUserIdentity();
+
+    const doc = await ctx.db.get(args.documentId);
+
+    if (!doc) throw new Error("Document not found");
+
+    if (doc?.isPublished && !doc.isArchived) {
+      return doc;
+    }
+
+    if (!identity) throw new Error("Not Authenticated");
+
+    const userId = identity.subject;
+
+    if (doc.userId !== userId)
+      throw new Error("You do not have access to this document");
+
+    return doc;
+  },
+});
+
+export const update = mutation({
+  args: {
+    id: v.id("documents"),
+    title: v.optional(v.string()),
+    coverImage: v.optional(v.string()),
+    content: v.optional(v.string()),
+    icon: v.optional(v.string()),
+    isPublished: v.optional(v.boolean()),
+  },
+  handler: async (ctx, args) => {
+    const identity = await ctx.auth.getUserIdentity();
+
+    if (!identity) throw new Error("Not Authenticated");
+
+    const userId = identity.subject;
+
+    const { id, ...rest } = args;
+    const existingDoc = await ctx.db.get(args.id);
+
+    if (!existingDoc) throw new Error("Document not found");
+
+    if (existingDoc.userId !== userId)
+      throw new Error("You can only update your own documents");
+
+    const document = await ctx.db.patch(args.id, { ...rest });
+
+    return document;
+  },
+});
